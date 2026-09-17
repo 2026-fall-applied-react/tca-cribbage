@@ -1,21 +1,21 @@
 import { useNavigate } from "react-router"
 
-export const Home = () => {
+export const Setup = () => {
 
     const nav = useNavigate();
 
     return (
         <div>
             <h1>
-                Home
+                Setup
             </h1>
             <button
                 className="btn btn-soft btn-lg mt-3"
                 onClick={
-                    () => nav('/setup')
+                    () => nav('/play')
                 }
             >
-                Setup a Game
+                Play the Game
             </button>
         </div>
     )
