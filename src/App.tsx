@@ -7,6 +7,7 @@ function App() {
     return (
         <div
             className="p-3"
+            data-theme="cupcake"
         >
             <h1 className="text-xl font-bold">
                 Get started
