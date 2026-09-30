@@ -1,14 +1,15 @@
-import './App.css';
+import { useState } from 'react';
 import {
     HashRouter,
     Routes,
     Route
 } from 'react-router';
+import './App.css';
 
+import { getLeaderBoard, type GameResult } from './GameResults';
 import { Home } from './Home';
 import { Setup } from './Setup';
 import { Play } from './Play';
-import type { GameResult } from './GameResults';
 
 const dummyGameResults : GameResult[] = [
   {
@@ -44,6 +45,21 @@ const dummyGameResults : GameResult[] = [
 ];
 
 const App = () => {
+
+    // 
+    // react hook, eg useState, useEffect, use*
+    // 
+
+    // const [gameResults, setGameResults] = useState<GameResult[]>([]);
+    const [gameResults, setGameResults] = useState<GameResult[]>(dummyGameResults);
+
+    // 
+    // derived or calculated state and helper funcs
+    // 
+
+    // 
+    // return jsx
+    // 
     return (
         <div
             className="p-3"
@@ -53,7 +69,11 @@ const App = () => {
                     <Route
                         path="/"
                         element={
-                            <Home />
+                            <Home
+                                leaderboard={
+                                    getLeaderBoard(gameResults)
+                                }
+                            />
                         }
                     />
                     <Route
