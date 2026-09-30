@@ -8,6 +8,40 @@ import {
 import { Home } from './Home';
 import { Setup } from './Setup';
 import { Play } from './Play';
+import type { GameResult } from './GameResults';
+
+const dummyGameResults : GameResult[] = [
+  {
+    winner: "Bryson",
+    players: [
+      "Zack",
+      "Bryson",
+      "Tom",
+    ],
+  },
+  {
+    winner: "Bryson",
+    players: [
+      "Bryson",
+      "Tom",
+      "Suzie",
+    ],
+  },
+  {
+    winner: "Zack",
+    players: [
+      "Zack",
+      "Suzie"
+    ]
+  },
+  {
+    winner: "John",
+    players: [
+      "John",
+      "Tom"
+    ]
+  },
+];
 
 const App = () => {
     return (
