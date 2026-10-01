@@ -33,7 +33,7 @@ export const Home: React.FC<HomeProps> = ({
     return (
         <div>
             <button
-                className="btn btn-soft btn-lg mt-3"
+                className="btn btn-soft btn-lg mt-3 w-full lg:w-64"
                 onClick={
                     () => nav('/setup')
                 }
