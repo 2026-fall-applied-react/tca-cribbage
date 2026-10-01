@@ -56,6 +56,7 @@ const App = () => {
     // 
     // derived or calculated state and helper funcs
     // 
+    const addNewGameResult = (newGameResult : GameResult) => setGameResults([...gameResults, newGameResult]);
 
     // 
     // return jsx
@@ -85,7 +86,11 @@ const App = () => {
                     <Route
                         path="/play"
                         element={
-                            <Play />
+                            <Play
+                                addNewGameResult={
+                                    addNewGameResult
+                                }
+                            />
                         }
                     />
                 </Routes>
