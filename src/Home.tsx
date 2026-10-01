@@ -1,16 +1,26 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router"
 import type { LeaderBoardEntry } from "./GameResults";
 
+export const APP_TITLE = "Cribbage Companion";
+
 type HomeProps = {
     leaderboard: LeaderBoardEntry[]
+    setTitle: (t : string) => void
 }
 
 export const Home: React.FC<HomeProps> = ({
-    leaderboard: lb
+    leaderboard: lb,
+    setTitle
 }) => {
     // 
     // react hooks
     // 
+    useEffect(
+        () => setTitle(APP_TITLE),
+        []
+    )
+
     const nav = useNavigate();
 
     // 
@@ -22,9 +32,6 @@ export const Home: React.FC<HomeProps> = ({
     // 
     return (
         <div>
-            <h1>
-                Home
-            </h1>
             <button
                 className="btn btn-soft btn-lg mt-3"
                 onClick={
