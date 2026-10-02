@@ -66,7 +66,7 @@ const getLeaderBoardEntry = (
     }
 };
 
-const getPreviousPlayers = (
+export const getPreviousPlayers = (
     games: GameResult[]
 ): string[] => games
     // just the players as a string array

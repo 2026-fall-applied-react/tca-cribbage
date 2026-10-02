@@ -5,7 +5,7 @@ import {
     Route
 } from 'react-router';
 import './App.css';
-import { getLeaderBoard, type GameResult } from './GameResults';
+import { getLeaderBoard, getPreviousPlayers, type GameResult } from './GameResults';
 
 import { APP_TITLE, Home } from './Home';
 import { Setup } from './Setup';
@@ -90,6 +90,7 @@ const App = () => {
                             path="/setup"
                             element={
                                 <Setup
+                                    previousPlayers={getPreviousPlayers(gameResults)}
                                     setTitle={
                                         setTitle
                                     }
