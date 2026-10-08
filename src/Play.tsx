@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 
 type PlayProps = {
     addNewGameResult : (r : GameResult) => void
-    setTitle: (t : string) => void
+    setTitle : (t : string) => void
+    currentPlayers : string[]
 }
 
-export const Play : React.FC<PlayProps> = ({ addNewGameResult, setTitle }) => {
+export const Play : React.FC<PlayProps> = ({ addNewGameResult, setTitle, currentPlayers }) => {
 
     // 
     // react hooks
@@ -26,7 +27,29 @@ export const Play : React.FC<PlayProps> = ({ addNewGameResult, setTitle }) => {
     // 
     return (
         <div>
-            <button
+            {
+                currentPlayers.map(
+                    x => (
+                        <button key={x}
+                            className="btn btn-soft btn-lg mt-3 w-full lg:w-64"
+                            onClick={
+                                () => {
+                                    addNewGameResult({
+                                        winner: x,
+                                        players: currentPlayers,
+                                        start: startTimeStamp,
+                                        end: new Date().toISOString()
+                                    })
+                                    nav(-2);
+                                }
+                            }
+                        >
+                            {x} Won
+                        </button>
+                    )
+                )
+            }
+            {/* <button
                 className="btn btn-soft btn-lg mt-3 w-full lg:w-64"
                 onClick={
                     () => {
@@ -41,7 +64,7 @@ export const Play : React.FC<PlayProps> = ({ addNewGameResult, setTitle }) => {
                 }
             >
                 Game Over
-            </button>
+            </button> */}
         </div>
     )
 }

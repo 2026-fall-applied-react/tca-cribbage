@@ -5,7 +5,7 @@ import {
     Route
 } from 'react-router';
 import './App.css';
-import { getGeneralFacts, getLeaderBoard, type GameResult } from './GameResults';
+import { getGeneralFacts, getLeaderBoard, getPreviousPlayers, type GameResult } from './GameResults';
 
 import { APP_TITLE, Home } from './Home';
 import { Setup } from './Setup';
@@ -60,6 +60,7 @@ const App = () => {
 
     // const [gameResults, setGameResults] = useState<GameResult[]>([]);
     const [gameResults, setGameResults] = useState<GameResult[]>(dummyGameResults);
+    const [currentPlayers, setCurrentPlayers] = useState<string[]>([]);
 
     const [title, setTitle] = useState(APP_TITLE);
     
@@ -104,6 +105,12 @@ const App = () => {
                                     setTitle={
                                         setTitle
                                     }
+                                    previousPlayers={
+                                        getPreviousPlayers(gameResults)
+                                    }
+                                    setCurrentPlayers={
+                                        setCurrentPlayers
+                                    }
                                 />
                             }
                         />
@@ -116,6 +123,9 @@ const App = () => {
                                     }
                                     setTitle={
                                         setTitle
+                                    }
+                                    currentPlayers={
+                                        currentPlayers
                                     }
                                 />
                             }

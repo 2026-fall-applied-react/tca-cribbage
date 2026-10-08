@@ -101,6 +101,24 @@ export const getGeneralFacts = (
     );
 }
 
+export const getPreviousPlayers = (
+    games: GameResult[]
+): string[] => games
+    // just the players as a string array
+    .flatMap(
+        x => x.players
+    )
+    // just unique players
+    .filter(
+        (x, i, a) => i === a.findIndex(
+            y => y === x
+        )
+    )
+    // sorted alphabetically
+    .sort(
+        (a, b) => a.localeCompare(b)
+    );
+
 // 
 // helper funcs
 // 
@@ -128,21 +146,3 @@ const getLeaderBoardEntry = (
         player: player
     }
 };
-
-const getPreviousPlayers = (
-    games: GameResult[]
-): string[] => games
-    // just the players as a string array
-    .flatMap(
-        x => x.players
-    )
-    // just unique players
-    .filter(
-        (x, i, a) => i === a.findIndex(
-            y => y === x
-        )
-    )
-    // sorted alphabetically
-    .sort(
-        (a, b) => a.localeCompare(b)
-    );
