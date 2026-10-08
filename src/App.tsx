@@ -5,7 +5,7 @@ import {
     Route
 } from 'react-router';
 import './App.css';
-import { getLeaderBoard, type GameResult } from './GameResults';
+import { getGeneralFacts, getLeaderBoard, type GameResult } from './GameResults';
 
 import { APP_TITLE, Home } from './Home';
 import { Setup } from './Setup';
@@ -19,28 +19,36 @@ const dummyGameResults: GameResult[] = [
             "Bryson",
             "Tom",
         ],
+        start: "2026-10-03T22:56:44.285Z",
+        end: "2026-10-03T23:06:59.285Z",
     },
     {
         winner: "Bryson",
         players: [
             "Bryson",
             "Tom",
-            "Suzie",
+            "Suzzie",
         ],
+        start: "2026-10-03T22:56:44.285Z",
+        end: "2026-10-03T23:06:59.285Z",
     },
     {
         winner: "Zack",
         players: [
             "Zack",
-            "Suzie"
-        ]
+            "Suzzie",
+        ],
+        start: "2026-10-03T22:56:44.285Z",
+        end: "2026-10-03T23:06:59.285Z",
     },
     {
         winner: "John",
         players: [
             "John",
-            "Tom"
-        ]
+            "Tom",
+        ],
+        start: "2026-10-05T22:56:44.285Z",
+        end: "2026-10-05T23:16:02.285Z",
     },
 ];
 
@@ -82,6 +90,9 @@ const App = () => {
                                     }
                                     setTitle={
                                         setTitle
+                                    }
+                                    generalFacts={
+                                        getGeneralFacts(gameResults)
                                     }
                                 />
                             }
