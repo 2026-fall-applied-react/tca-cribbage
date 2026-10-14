@@ -21,6 +21,8 @@ export const Setup: React.FC<SetupProps> = ({ setTitle, previousPlayers, setCurr
         )
     );
 
+    const [newPlayerName, setNewPlayerName] = useState("");
+
     useEffect(
         () => setTitle("Setup"),
         []
@@ -35,6 +37,43 @@ export const Setup: React.FC<SetupProps> = ({ setTitle, previousPlayers, setCurr
         x => x.checked
     ).length;
 
+    const validateAndAdd = () => {
+        // check for dupe names
+        const dupe = availablePlayers.find(
+            x => x.name.toUpperCase() === newPlayerName.toUpperCase()
+        );
+
+        // if dupe, don't add, rather just check
+        // if not a dupe, add it, already checked since likely
+        // in front of user, ready to play
+        setAvailablePlayers(
+            prev => [
+                // handle dupes by just checking them
+                ...prev.map(
+                    x => x === dupe
+                        ? {
+                            ...x,
+                            checked: true
+                        }
+                        : x
+                ),
+
+                // now add non dupes
+                ...(
+                    dupe
+                        ? []
+                        : [
+                            {
+                                name: newPlayerName,
+                                checked: true
+                            }
+                        ]
+                ),
+            ]
+        );
+
+        setNewPlayerName("");
+    }
     // 
     // return jsx
     // 
@@ -64,8 +103,21 @@ export const Setup: React.FC<SetupProps> = ({ setTitle, previousPlayers, setCurr
                 }
             </button>
             <div className="join mt-3 mb-5 w-full lg:w-64">
-                <input className="input join-item w-full" placeholder="Enter player name" />
-                <button className="btn join-item">Add</button>
+                <input
+                    className="input join-item w-full"
+                    placeholder="Enter player name"
+                    value={newPlayerName}
+                    onChange={(e) => {
+                        setNewPlayerName(e.target.value);
+                    }}
+                />
+                <button
+                    className="btn join-item"
+                    disabled={newPlayerName.length === 0}
+                    onClick={validateAndAdd}
+                >
+                    Add
+                </button>
             </div>
             {
                 availablePlayers.map(
