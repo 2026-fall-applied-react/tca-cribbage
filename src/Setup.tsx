@@ -2,12 +2,12 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router"
 
 type SetupProps = {
-    setTitle : (t : string) => void
-    previousPlayers : string[]
-    setCurrentPlayers : (players : string[]) => void
+    setTitle: (t: string) => void
+    previousPlayers: string[]
+    setCurrentPlayers: (players: string[]) => void
 }
 
-export const Setup : React.FC<SetupProps> = ({ setTitle, previousPlayers, setCurrentPlayers }) => {
+export const Setup: React.FC<SetupProps> = ({ setTitle, previousPlayers, setCurrentPlayers }) => {
 
     // 
     // react hooks
@@ -39,7 +39,9 @@ export const Setup : React.FC<SetupProps> = ({ setTitle, previousPlayers, setCur
     // return jsx
     // 
     return (
-        <div>
+        <div
+            className="flex flex-col"
+        >
             <button
                 className="btn btn-soft btn-lg mt-3 w-full lg:w-64"
                 disabled={chosenPlayerCount !== 2}
@@ -61,6 +63,10 @@ export const Setup : React.FC<SetupProps> = ({ setTitle, previousPlayers, setCur
                         : `Play the game`
                 }
             </button>
+            <div className="join mt-3 mb-5 w-full lg:w-64">
+                <input className="input join-item w-full" placeholder="Enter player name" />
+                <button className="btn join-item">Add</button>
+            </div>
             {
                 availablePlayers.map(
                     x => (
