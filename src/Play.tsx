@@ -26,11 +26,14 @@ export const Play : React.FC<PlayProps> = ({ addNewGameResult, setTitle, current
     // return jsx
     // 
     return (
-        <div>
+        <div
+            className="flex flex-col gap"
+        >
             {
                 currentPlayers.map(
                     x => (
-                        <button key={x}
+                        <button
+                            key={x}
                             className="btn btn-soft btn-lg mt-3 w-full lg:w-64"
                             onClick={
                                 () => {
