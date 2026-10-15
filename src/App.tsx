@@ -5,7 +5,7 @@ import {
     Route
 } from 'react-router';
 import './App.css';
-import { getGeneralFacts, getLeaderBoard, getPreviousPlayers, type GameResult } from './GameResults';
+import { getGameDurations, getGeneralFacts, getLeaderBoard, getPreviousPlayers, type GameResult } from './GameResults';
 
 import { APP_TITLE, Home } from './Home';
 import { Setup } from './Setup';
@@ -94,6 +94,9 @@ const App = () => {
                                     }
                                     generalFacts={
                                         getGeneralFacts(gameResults)
+                                    }
+                                    gameDurations={
+                                        getGameDurations(gameResults)
                                     }
                                 />
                             }
