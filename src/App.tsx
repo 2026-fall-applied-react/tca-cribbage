@@ -52,6 +52,9 @@ const dummyGameResults: GameResult[] = [
     },
 ];
 
+const DEFAULT_THEME = "light";
+const OTHER_THEME = "dark";
+
 const App = () => {
 
     // 
@@ -61,9 +64,8 @@ const App = () => {
     // const [gameResults, setGameResults] = useState<GameResult[]>([]);
     const [gameResults, setGameResults] = useState<GameResult[]>(dummyGameResults);
     const [currentPlayers, setCurrentPlayers] = useState<string[]>([]);
-
     const [title, setTitle] = useState(APP_TITLE);
-
+    const [theme, setTheme] = useState(DEFAULT_THEME);
     // 
     // derived or calculated state and helper funcs
     // 
@@ -73,7 +75,10 @@ const App = () => {
     // return jsx
     // 
     return (
-        <>
+        <div
+            className="min-h-screen"
+            data-theme={theme}
+        >
             <div className="navbar bg-base-100 shadow-sm">
                 <p className="font-bold text-xl">
                     {title}
@@ -82,6 +87,10 @@ const App = () => {
                     {/* this hidden checkbox controls the state */}
                     <input
                         type="checkbox"
+                        checked={theme !== DEFAULT_THEME}
+                        onChange={
+                            () => setTheme(theme === DEFAULT_THEME ? OTHER_THEME : DEFAULT_THEME)
+                        }
                     />
                     {/* sun icon */}
                     <svg
@@ -163,7 +172,7 @@ const App = () => {
                     </Routes>
                 </HashRouter>
             </div>
-        </>
+        </div>
     )
 }
 
