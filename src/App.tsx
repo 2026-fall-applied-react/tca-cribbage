@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import localforage from 'localforage';
 import {
     HashRouter,
     Routes,
@@ -66,6 +67,23 @@ const App = () => {
     const [currentPlayers, setCurrentPlayers] = useState<string[]>([]);
     const [title, setTitle] = useState(APP_TITLE);
     const [theme, setTheme] = useState(DEFAULT_THEME);
+
+    useEffect(() => {
+        const loadTheme = async() => {
+            const savedTheme = await localforage.getItem<string>("theme") ?? DEFAULT_THEME;
+
+            if (!ignore) setTheme(savedTheme);
+        }
+
+        let ignore = false;
+        loadTheme();
+
+        // clean up method - runs after effect runs so will not run again
+        return () => {
+            ignore = true;
+        }
+    }, []);
+
     // 
     // derived or calculated state and helper funcs
     // 
@@ -89,7 +107,15 @@ const App = () => {
                         type="checkbox"
                         checked={theme !== DEFAULT_THEME}
                         onChange={
-                            () => setTheme(theme === DEFAULT_THEME ? OTHER_THEME : DEFAULT_THEME)
+                            async () => {
+                                const savedTheme = await localforage.setItem<string>(
+                                    "theme",
+                                    theme === DEFAULT_THEME
+                                        ? OTHER_THEME
+                                        : DEFAULT_THEME
+                                )
+                                setTheme(savedTheme);
+                            }
                         }
                     />
                     {/* sun icon */}
