@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router"
 import type { GameResult } from "./GameResults";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 type PlayProps = {
     addNewGameResult : (r : GameResult) => void
@@ -16,12 +16,14 @@ export const Play: React.FC<PlayProps> = ({ addNewGameResult, setTitle, currentP
     //
     const [playerScores, setPlayerScores] = useState([0, 0]);
     const [startTimeStamp] = useState(new Date().toISOString());
+    const [winner, setWinner] = useState("");
+
+    const dialogEl= useRef<HTMLDialogElement>(null);
 
     useEffect(
         () => setTitle("Play"),
         []
     )
-
 
     const nav = useNavigate();
 
@@ -36,6 +38,12 @@ export const Play: React.FC<PlayProps> = ({ addNewGameResult, setTitle, currentP
             end: new Date().toISOString()
         })
         nav(-2);
+    }
+
+    const showWinnerDialog = () => {
+        if (dialogEl.current) {
+            dialogEl.current.showModal();
+        }
     }
 
     // 
@@ -64,7 +72,8 @@ export const Play: React.FC<PlayProps> = ({ addNewGameResult, setTitle, currentP
                                         let newScore = Number(e.currentTarget.value);
                                         // if score is >= 121, player wins, no need to set just declare winner
                                         if (newScore >= WINNING_SCORE) {
-                                            declareWinner(x);
+                                            setWinner(x);
+                                            showWinnerDialog();
                                             return;
                                         }
 
@@ -75,19 +84,18 @@ export const Play: React.FC<PlayProps> = ({ addNewGameResult, setTitle, currentP
                                     }}
                                 />
                             </label>
-                            <p className="validator-hint">Must be between be 1 to 10</p>
-                            <button
-                                className="btn btn-soft btn-lg mt-3 w-full lg:w-64"
-                                onClick={
-                                    () => declareWinner(x)
-                                }
-                            >
-                                {x} Won
-                            </button>
                         </div>
                     )
                 )
             }
+            <dialog id="winnerDialog" className="modal" ref={dialogEl}>
+                <div className="modal-box">
+                    <p className="py-4">{winner} wins!</p>
+                    <div className="modal-action">
+                        <button className="btn" onClick={() => declareWinner(winner)}>End Game</button>
+                    </div>
+                </div>
+            </dialog>
         </div>
     )
 }
