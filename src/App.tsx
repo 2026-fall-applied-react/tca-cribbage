@@ -6,11 +6,12 @@ import {
     Route
 } from 'react-router';
 import './App.css';
-import { getGameDurations, getGeneralFacts, getLeaderBoard, getPreviousPlayers, type GameResult } from './GameResults';
+import { getGameDurations, getGeneralFacts, getLeaderBoard, getPreviousPlayers, type GameResult, type Turn } from './GameResults';
 
 import { APP_TITLE, Home } from './Home';
 import { Setup } from './Setup';
 import { Play } from './Play';
+import { generateDummyTurnsArray } from './GameResults';
 
 const dummyGameResults: GameResult[] = [
     {
@@ -18,8 +19,8 @@ const dummyGameResults: GameResult[] = [
         players: [
             "Zack",
             "Bryson",
-            "Tom",
         ],
+        turns: generateDummyTurnsArray("Zack", "Bryson"),
         start: "2026-10-03T22:56:44.285Z",
         end: "2026-10-03T23:06:59.285Z",
     },
@@ -27,9 +28,9 @@ const dummyGameResults: GameResult[] = [
         winner: "Bryson",
         players: [
             "Bryson",
-            "Tom",
             "Suzzie",
         ],
+        turns: generateDummyTurnsArray("Bryson", "Suzzie"),
         start: "2026-10-03T22:56:44.285Z",
         end: "2026-10-03T23:06:59.285Z",
     },
@@ -39,6 +40,7 @@ const dummyGameResults: GameResult[] = [
             "Zack",
             "Suzzie",
         ],
+        turns: generateDummyTurnsArray("Zack", "Suzzie"),
         start: "2026-10-03T22:56:44.285Z",
         end: "2026-10-03T23:06:59.285Z",
     },
@@ -48,6 +50,7 @@ const dummyGameResults: GameResult[] = [
             "John",
             "Tom",
         ],
+        turns: generateDummyTurnsArray("John", "Tom"),
         start: "2026-10-05T22:56:44.285Z",
         end: "2026-10-05T23:16:02.285Z",
     },
@@ -57,7 +60,6 @@ const DEFAULT_THEME = "light";
 const OTHER_THEME = "dark";
 
 const App = () => {
-
     // 
     // react hook, eg useState, useEffect, use*
     // 

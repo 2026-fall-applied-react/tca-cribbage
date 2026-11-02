@@ -14,8 +14,18 @@ const formatLastPlayed = durationFormatter<string>(
 export type GameResult = {
     winner : string
     players : string[]
+    turns : Turn[]
     start : string
     end : string
+}
+
+export type Turn = TurnScore[]
+
+export type TurnScore = {
+    player: string
+    play: number
+    show?: number
+    crib?: number
 }
 
 export type LeaderBoardEntry = {
@@ -183,3 +193,23 @@ const getLeaderBoardEntry = (
         player: player
     }
 };
+
+
+export const generateDummyTurnsArray = (p1 : string, p2 : string) => {
+    let numTurns = Math.floor(Math.random() * 15) + 5;
+    let turnsArr : Turn[] = []
+    for (let i = 0; i < numTurns; i++) {
+        turnsArr.push([
+            {
+                player: p1,
+                play: Math.floor(Math.random() * 8) + 2
+            },
+            {
+                player: p2,
+                play: Math.floor(Math.random() * 8) + 2
+            }
+        ])
+    }
+
+    return turnsArr
+}
