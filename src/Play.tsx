@@ -35,7 +35,7 @@ export const Play: React.FC<PlayProps> = ({ addNewGameResult, setTitle, currentP
     useEffect(
         () => {
             setTotalPlayerScores(currentPlayers.map(
-                (p, i) => turns.map(
+                (_p, i) => turns.map(
                     turn => turn[i]
                 ).reduce(
                     (acc, curr) => {
