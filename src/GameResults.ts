@@ -41,6 +41,21 @@ export type GameDurationEntry = {
     avg : string
 }
 
+export type StreakGame = {
+    end : string
+    players : string[]
+}
+
+export type WinStreakEntry = {
+    player : string
+    current : StreakGame[] // empty unless the active run is a real streak
+    longest : StreakGame[] // empty unless the best run is a real streak
+    longestBrokenBy? : StreakGame & { winner : string } // undefined if the longest streak is still active
+}
+
+// a "streak" needs at least this many consecutive wins
+export const MIN_STREAK_LENGTH = 1;
+
 export type GeneralFacts = {
     lastPlayed : string
     totalGames : number
@@ -72,6 +87,57 @@ export const getLeaderBoard = (
                 : b.avg - a.avg
         )
     )
+
+// Streaks only count games the player took part in; a loss ends a streak.
+// Runs shorter than MIN_STREAK_LENGTH are reported as empty.
+export const getWinStreaks = (
+    games: GameResult[]
+): WinStreakEntry[] => {
+    const chronological = [...games].sort(
+        (a, b) => Date.parse(a.end) - Date.parse(b.end)
+    );
+
+    return getPreviousPlayers(games).map(
+        player => {
+            let run: StreakGame[] = [];
+            let longest: StreakGame[] = [];
+            let longestBrokenBy: WinStreakEntry["longestBrokenBy"];
+
+            chronological
+                .filter(g => g.players.includes(player))
+                .forEach(
+                    g => {
+                        if (g.winner === player) {
+                            run = [...run, { end: g.end, players: g.players }];
+                            if (run.length > longest.length) {
+                                longest = run;
+                                longestBrokenBy = undefined;
+                            }
+                        } else {
+                            // first loss right after the longest run ends it
+                            if (run.length > 0 && run === longest) {
+                                longestBrokenBy = { end: g.end, players: g.players, winner: g.winner };
+                            }
+                            run = [];
+                        }
+                    }
+                );
+
+            const qualifies = (s: StreakGame[]) => s.length >= MIN_STREAK_LENGTH;
+
+            return {
+                player,
+                current: qualifies(run) ? run : [],
+                longest: qualifies(longest) ? longest : [],
+                longestBrokenBy: qualifies(longest) ? longestBrokenBy : undefined,
+            };
+        }
+    ).sort(
+        (a, b) => b.longest.length - a.longest.length
+            || b.current.length - a.current.length
+            || a.player.localeCompare(b.player)
+    );
+};
 
 export const getGeneralFacts = (
     games: GameResult[]
