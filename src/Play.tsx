@@ -61,7 +61,6 @@ export const Play: React.FC<PlayProps> = ({ addNewGameResult, setTitle, currentP
             if (winningPlayerIndex > -1) setWinner(currentPlayers[winningPlayerIndex]);
         }
     , [playerTotalScores]);
-
     
     useEffect(
         () => {
@@ -82,6 +81,16 @@ export const Play: React.FC<PlayProps> = ({ addNewGameResult, setTitle, currentP
     // 
     // helpers
     // 
+    const totals = currentPlayers.map(
+        (_p, i) => turns.map(
+            turn => turn[i]
+        ).reduce(
+            (acc, curr) => {
+                return acc + curr.play + (curr.show ?? 0) + (curr.crib ?? 0)
+            }, 0
+        )
+    );
+
     const declareWinner = (winner : string) => {
         addNewGameResult({
             winner: winner,
@@ -145,7 +154,7 @@ export const Play: React.FC<PlayProps> = ({ addNewGameResult, setTitle, currentP
                 currentPlayers.map( (p, index) => {
                     return (
                         <div key={p} className="w-100 text-center">
-                            <p className="text-xl">{p} {playerTotalScores[index]}</p>
+                            <p className="text-xl">{p} {totals[index]}</p>
                         </div>
                     )
                 })
