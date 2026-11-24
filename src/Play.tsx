@@ -9,18 +9,22 @@ type PlayProps = {
     currentPlayers : string[]
 }
 
-const turnPhases = ["Play", "Show", "Crib"] as const;
-type TurnPhase = typeof turnPhases[number];
+
 
 export const Play: React.FC<PlayProps> = ({ addNewGameResult, setTitle, currentPlayers }) => {
     const WINNING_SCORE = 121;
 
+    type TurnPhase = "play" | "show" | "crib";
+    const phaseMap : Record<TurnPhase, TurnPhase> = {
+        "play": "show",
+        "show": "crib",
+        "crib": "play"
+    }
+
     // 
     // react hooks
     //
-    const [playerTotalScores, setTotalPlayerScores] = useState([0, 0]);
     const [startTimeStamp] = useState(new Date().toISOString());
-    const [winner, setWinner] = useState("");
     const [turns, setTurns] = useState<Turn[]>([
         currentPlayers.map(
             p => ({
@@ -29,9 +33,7 @@ export const Play: React.FC<PlayProps> = ({ addNewGameResult, setTitle, currentP
             })
         )
     ]);
-    const [phaseIndex, setPhaseIndex] = useState<number>(0);
-    const [phase, setPhase] = useState<TurnPhase>(turnPhases[phaseIndex]);
-    const [nextPhase, setNextPhase] = useState<TurnPhase>(turnPhases[phaseIndex + 1])
+    const [phase, setPhase] = useState<TurnPhase>("play");
     const [showScores, setShowScores] = useState<number[]>([0,0]);
     const [cribScore, setCribScore] = useState<number>(0);
     const [dealer, setDealer] = useState<string | null>(null);
@@ -39,47 +41,12 @@ export const Play: React.FC<PlayProps> = ({ addNewGameResult, setTitle, currentP
     useEffect(
         () => setTitle("Play"),
         []
-    )
-
-    useEffect(
-        () => {
-            setTotalPlayerScores(currentPlayers.map(
-                (_p, i) => turns.map(
-                    turn => turn[i]
-                ).reduce(
-                    (acc, curr) => {
-                        return acc + curr.play + (curr.show ?? 0) + (curr.crib ?? 0)
-                    }, 0
-                )
-            ));
-        }
-    , [turns]);
-
-    useEffect(
-        () => {
-            let winningPlayerIndex = playerTotalScores.findIndex(s => s >= WINNING_SCORE);
-            if (winningPlayerIndex > -1) setWinner(currentPlayers[winningPlayerIndex]);
-        }
-    , [playerTotalScores]);
-    
-    useEffect(
-        () => {
-            setPhase(turnPhases[phaseIndex]);
-        }
-    , [phaseIndex]);
-        
-    useEffect(
-        () => {
-            let nextPhaseIndex = phaseIndex + 1;
-            if (nextPhaseIndex === turnPhases.length) nextPhaseIndex = 0;
-            setNextPhase(turnPhases[nextPhaseIndex])
-        }
-    , [phaseIndex]);
+    );
 
     const nav = useNavigate();
 
     // 
-    // helpers
+    // derived or calculated state and helper funcs
     // 
     const totals = currentPlayers.map(
         (_p, i) => turns.map(
@@ -90,6 +57,9 @@ export const Play: React.FC<PlayProps> = ({ addNewGameResult, setTitle, currentP
             }, 0
         )
     );
+
+    const winnerIndex = totals.findIndex(t => t >= WINNING_SCORE);
+    const nextPhase = phaseMap[phase];
 
     const declareWinner = (winner : string) => {
         addNewGameResult({
@@ -102,27 +72,30 @@ export const Play: React.FC<PlayProps> = ({ addNewGameResult, setTitle, currentP
         nav(-2);
     }
 
-    const updatePlayerScoreThisTurn = (playerName : string, phase : TurnPhase, points : number) => {
+    const pegForPlayer = (playerName : string) => {
         let updatedTurns = [...turns];
         let thisTurn = updatedTurns[updatedTurns.length -1];
         let thisScore = thisTurn.find(t => t.player === playerName);
         if (thisScore) {
-            if (phase === 'Play') {
-                thisScore.play += points;
-            } else if (phase === 'Show') {
-                thisScore.show = points
-            } else {
-                thisScore.crib = points
-            }
+            thisScore.play += 1;
+        }
+
+        setTurns([...updatedTurns]);
+    }
+
+    const updatePlayerScoreThisTurn = (playerName : string, points : number) => {
+        let updatedTurns = [...turns];
+        let thisTurn = updatedTurns[updatedTurns.length -1];
+        let thisScore = thisTurn.find(t => t.player === playerName);
+        if (thisScore) {
+            thisScore[phase] = points;
         };
 
         setTurns([...updatedTurns]);
     }
 
     const incrementPhase = () => {
-        phaseIndex + 1 < turnPhases.length
-            ? setPhaseIndex(phaseIndex + 1)
-            : setPhaseIndex(0);
+        setPhase(nextPhase)
     }
 
     const incrementTurn = () => {
@@ -141,13 +114,17 @@ export const Play: React.FC<PlayProps> = ({ addNewGameResult, setTitle, currentP
         setDealer(null);
     }
 
+    const capitalize = (str : string) => str.split("")
+        .map( (c, i) => i === 0 ? c.toUpperCase() : c)
+        .join("");
+
     // 
     // return jsx
     // 
     return (
         <>
         <h2 className="text-center">
-            Turn {turns.length} - {phase}
+            Turn {turns.length} - {capitalize(phase)}
         </h2>
         <div className="w-100 flex justify-between mx-auto">
             {
@@ -161,16 +138,16 @@ export const Play: React.FC<PlayProps> = ({ addNewGameResult, setTitle, currentP
             }
         </div>
         <div className="flex justify-between mx-auto my-5 gap-20">
-            {phase === "Play" ? (
+            {phase === "play" ? (
                 currentPlayers.map( (p) => {
                     return (
                             <button
                                 className="btn"
-                                onClick={() => updatePlayerScoreThisTurn(p, "Play", 1)}
+                                onClick={() => pegForPlayer(p)}
                             >Peg</button>
                     )
                 })
-            ) : phase === 'Show' ? (
+            ) : phase === 'show' ? (
                 currentPlayers.map( (p, index) => {
                     const hasScored = Object.hasOwn(turns[turns.length -1][index], "show");
                     return (
@@ -192,7 +169,7 @@ export const Play: React.FC<PlayProps> = ({ addNewGameResult, setTitle, currentP
                                 className="btn join-item"
                                 disabled={hasScored}
                                 onClick={
-                                    () => updatePlayerScoreThisTurn(p, "Show", showScores[index])
+                                    () => updatePlayerScoreThisTurn(p, showScores[index])
                             }
                             >Score</button>
                         </div>
@@ -232,7 +209,7 @@ export const Play: React.FC<PlayProps> = ({ addNewGameResult, setTitle, currentP
                                     ts => Object.hasOwn(ts, "crib")
                                 )}
                                 onClick={
-                                    () => dealer && updatePlayerScoreThisTurn(dealer, "Crib", cribScore)
+                                    () => dealer && updatePlayerScoreThisTurn(dealer, cribScore)
                             }
                             >Score</button>
                     </div>
@@ -243,7 +220,7 @@ export const Play: React.FC<PlayProps> = ({ addNewGameResult, setTitle, currentP
             className="flex flex-col lg:flex-row gap-3 justify-center"
         >
         <WinnerDialog
-            winner={winner}
+            winner={currentPlayers[winnerIndex]}
             callback={declareWinner}
         />
         </div>
@@ -252,7 +229,7 @@ export const Play: React.FC<PlayProps> = ({ addNewGameResult, setTitle, currentP
                 className="btn mx-auto"
                 onClick={
                     () => {
-                        if (phase === "Crib") {
+                        if (phase === "crib") {
                             incrementTurn();
                         }
                         clearScoreInputs();
@@ -260,11 +237,11 @@ export const Play: React.FC<PlayProps> = ({ addNewGameResult, setTitle, currentP
                     }
                 }
                 disabled={(
-                    (phase === "Show" && !turns[turns.length -1].every( ts => Object.hasOwn(ts, "show")))
-                        || phase === "Crib" && !turns[turns.length -1].some( ts => Object.hasOwn(ts, "crib"))
+                    (phase === "show" && !turns[turns.length -1].every( ts => Object.hasOwn(ts, "show")))
+                        || phase === "crib" && !turns[turns.length -1].some( ts => Object.hasOwn(ts, "crib"))
                 )}
             >
-                {nextPhase === "Play" ? "Next Turn" : `${nextPhase} Phase`}
+                {nextPhase === "play" ? "Next Turn" : `${capitalize(nextPhase)} Phase`}
             </button>
         </div>
         </>
